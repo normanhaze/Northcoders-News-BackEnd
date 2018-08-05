@@ -1,7 +1,7 @@
 const mongoose = require('mongoose');
 const data = require('./devData');
 const seedDB = require('./seed');
-const { DB_URL } = require('../config');
+const DB_URL = process.env.PORT || require('../config').DB_URL;
 
 mongoose.connect(DB_URL, { useNewUrlParser: true })
 .then(() => seedDB(data))

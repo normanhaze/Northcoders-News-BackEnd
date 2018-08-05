@@ -20,18 +20,17 @@ const addArticleByTopic = (req, res, next) => {
     const { topic_slug } = req.params;
     User.findById(req.body.created_by)
     .then(user => {
-        if (user === null) throw { status: 404 }; 
+        if (user === null) throw { status: 404, message: 'User not found' }; 
         return Article.create({ 
             ...req.body,
             belongs_to: topic_slug
         });
     })
     .then(article => {
-        res.status(201).send({ msg: 'Article succesfully added!', article })
+        res.status(201).send({ message: 'Article succesfully added!', article })
     })
     .catch(err => {
         if (err.name === 'ValidationError') err.status = 400;
-        else if (err.status === 404) err.message = 'User not found';
         next(err);
     });
 };

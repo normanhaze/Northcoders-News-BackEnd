@@ -1,4 +1,4 @@
-const { Article, Comment } = require('../models');
+const { User, Article, Comment } = require('../models');
 
 const getArticles = (req, res, next) => {
     Article.find()
@@ -11,18 +11,16 @@ const getArticleById = (req, res, next) => {
     Article.findById(article_id)
     .then(article => {
         if (article !== null) res.status(200).send({ article })
-        else throw ({ status: 404 })
+        else throw ({ status: 404, message: `Article ${article_id} not found` })
     })
     .catch(err => {
         if (err.name === 'CastError') err.status = 400;
-        else if (err.status === 404) err.message = `Article ${article_id} not found`;
         next(err);
     });
 };
 
 const getArticleComments = (req, res, next) => {
     const { article_id } = req.params;
-    console.log(article_id);
     Article.findById(article_id)
     .then(article => { 
         if (article === null) throw {status: 404, message: `Article ${article_id} not found` };
@@ -40,22 +38,41 @@ const getArticleComments = (req, res, next) => {
 
 const addComment = (req, res, next) => {
     const { article_id } = req.params;
-    Article.findById(article_id)
+    User.findById(req.body.created_by)
+    .then(user => {
+        if (user === null) throw {status: 404, message: `User ${req.body.created_by} not found`};
+        return Article.findById(article_id)
+    })
     .then(article => {
-        if (article === null) throw {status: 404 };
+        if (article === null) throw {status: 404, message: `Article ${article_id} not found`};
         return Comment.create({
             ...req.body,
             belongs_to: article_id
-        })
-        .then(comment => {
-            res.status(201).send({message: 'Comment successfully added!', comment})
-        })
-        .catch(err => {
-            if (err.name === 'ValidationError') err.status = 400;
-            else if (err.status === 404) err.message = `Article ${article_id} not found`;
-            next(err)
-        })
+        });
     })
-}
+    .then(comment => {
+        res.status(201).send({message: 'Comment successfully added!', comment})
+    })
+    .catch(err => {
+        if (err.name === 'ValidationError' || err.name === 'CastError') err.status = 400;
+        next(err)
+    });
+};
 
-module.exports = { getArticles, getArticleById, getArticleComments, addComment };
+const voteArticle = (req, res, next) => {
+    const { article_id } = req.params;
+    let vote = 0;
+    if (req.query.vote === 'up') vote = +1;
+    else if (req.query.vote === 'down') vote = -1;
+    Article.findByIdAndUpdate(article_id, { $inc: { votes: vote }}, { new: true })
+    .then(article => {
+        if (article) res.status(200).send({ article })
+        else throw {status: 404, message: `Article ${article_id} not found` };
+    })
+    .catch(err => {
+        if (err.name === 'CastError') err.status = 400;
+        next(err);
+    });
+};
+
+module.exports = { getArticles, getArticleById, getArticleComments, addComment, voteArticle };

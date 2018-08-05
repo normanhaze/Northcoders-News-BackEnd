@@ -8,11 +8,10 @@ const voteComment = (req, res, next) => {
     Comment.findByIdAndUpdate(comment_id, { $inc: { votes: vote }}, { new: true })
     .then(comment => {
         if (comment) res.status(200).send({ comment })
-        else throw {status: 404};
+        else throw {status: 404, message: `Comment ${comment_id} not found` };
     })
     .catch(err => {
         if (err.name === 'CastError') err.status = 400;
-        else if (err.status === 404) err.message = 'Comment not found';
         next(err);
     });
 };
@@ -21,12 +20,11 @@ const deleteComment = (req, res, next) => {
     const { comment_id } = req.params;
     Comment.findByIdAndDelete(comment_id)
     .then((comment) => {
-        if (comment) res.status(200).send({message: 'Comment deleted'});
-        else throw { status: 404 }  
+        if (comment) res.status(200).send({ message: 'Comment deleted' });
+        else throw { status: 404, message: `Comment ${comment_id} not found` }  
     })
     .catch(err => {
         if (err.name === 'CastError') err.status = 400;
-        else if (err.status === 404) err.message = 'Comment not found';
         next(err);
     });
 };
