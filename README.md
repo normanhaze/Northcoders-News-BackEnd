@@ -3,7 +3,7 @@ Northcoders News is a news and blogging site. The following instructions will al
 
 The API includes pathways to view articles, users, topics and comments, add and vote on articles and comments, and delete comments. Details of all available routes can be found on the '/api' route.
 
-[Here is a link to a hosted version of the application.]()
+[Here is a link to a hosted version of the application.](https://hn-northcoders-news.herokuapp.com/api)
 
 ## Getting Started
 
@@ -11,7 +11,7 @@ The API includes pathways to view articles, users, topics and comments, add and 
 To set up the API, you will need [Node](https://nodejs.org/en/download/) and [Mongo](https://docs.mongodb.com/manual/installation/) installed on your machine. Follow the links for instructions on how to do this.
 
 ### Installing
-Fork and clone the repository from Github. 
+Fork and clone the [repository from Github](https://github.com/normanhaze/BE-FT-northcoders-news). 
 
 Navigate into the directory on your command line and run ```npm install``` to install the required dependencies. These are as follows:
 * Express

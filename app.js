@@ -3,7 +3,7 @@ const app = express();
 const mongoose = require('mongoose');
 const bodyParser = require('body-parser');
 const apiRouter = require('./routes/api-routes');
-const DB_URL = process.env.PORT || require('../config').DB_URL;
+const DB_URL = process.env.DB_URL || require('../config').DB_URL;
 mongoose.connect(DB_URL, { useNewUrlParser: true })
 .then(console.log('connected to Mongo'));
 
