@@ -1,23 +1,46 @@
 const { User, Article, Comment } = require('../models');
 
 const getArticles = (req, res, next) => {
-    Article.find()
-    .then(articles => res.status(200).send({ articles }))
-    .catch(err => next(err));
+    return Promise.all([
+        Article.find().populate("created_by").lean(),
+        Comment.find()
+    ])
+    .then(([articles, comments]) => {
+        const commentCount = comments.reduce((acc, comment) => {
+            let articleId = comment.belongs_to;
+            if (acc[articleId]) acc[articleId]++;
+            else acc[articleId] = 1;
+            return acc;
+        }, {});
+        const all_articles = articles.map(article => { 
+            return {...article, comment_count: commentCount[article._id] || 0} 
+        });
+            // article.comments = commentCount[article._id] || 0);
+        res.status(200).send({ all_articles });
+        })
+    .catch(next);
 };
 
 const getArticleById = (req, res, next) => {
     const { article_id } = req.params;
-    Article.findById(article_id)
+    Article.findById(article_id).populate("created_by").lean()
     .then(article => {
-        if (article !== null) res.status(200).send({ article })
-        else throw ({ status: 404, message: `Article ${article_id} not found` })
+        if (article === null) throw ({ status: 404, message: `Article ${article_id} not found` });
+        else return Promise.all([
+            article,
+            Comment.find({ belongs_to: article_id })
+        ])
+        .then(([article, comments]) => {
+            const articleWithComments = {...article, comment_count: comments.length}
+            res.status(200).send({ article: articleWithComments })
+        })  
     })
     .catch(err => {
         if (err.name === 'CastError') err.status = 400;
         next(err);
     });
 };
+
 
 const getArticleComments = (req, res, next) => {
     const { article_id } = req.params;
@@ -66,8 +89,8 @@ const voteArticle = (req, res, next) => {
     else if (req.query.vote === 'down') vote = -1;
     Article.findByIdAndUpdate(article_id, { $inc: { votes: vote }}, { new: true })
     .then(article => {
-        if (article) res.status(200).send({ article })
-        else throw {status: 404, message: `Article ${article_id} not found` };
+        if (article === null) throw {status: 404, message: `Article ${article_id} not found` };
+        else res.status(200).send({ article });
     })
     .catch(err => {
         if (err.name === 'CastError') err.status = 400;

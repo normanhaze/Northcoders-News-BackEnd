@@ -7,7 +7,7 @@ const getUserByUsername = (req, res, next) => {
         if (user !== null) res.status(200).send({ user });
         else throw {status: 404, message: `User ${username} not found`};
     })
-    .catch(err => next(err));
+    .catch(next);
 };
 
 module.exports = { getUserByUsername };

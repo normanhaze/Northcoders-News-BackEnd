@@ -15,6 +15,7 @@ describe('/api', () => {
             [topics, users, articles, comments] = docs
         });
     });
+    after(() => mongoose.disconnect());
     it('first user returned is jonny', () => {
         const jonny = users[0];
         expect(jonny.name).to.equal('jonny');
@@ -357,32 +358,21 @@ describe('/api', () => {
             expect(res.body.message).to.equal("User user123 not found");
         });
     });
-});
-
-describe('/api - deleting comments', () => {
-    let topics, users, articles, comments;
-    before(() => {
-        return seedDB(data)
-        .then(docs => {
-            [topics, users, articles, comments] = docs
-        });
-    });
-    after(() => mongoose.disconnect());
-    it('DELETE /api/comments/:comment_id returns 200 and success message when comment is deleted', () => {
+    it('DELETE /api/comments/:comment_id returns 200 and success message when comment is deleted, and is not returned for subsequent GET requests', () => {
         return request
         .delete(`/api/comments/${comments[0]._id}`)
         .expect(200)
         .then(res => {
             expect(res.body).to.be.a('object');
             expect(res.body.message).to.equal('Comment deleted');
-        });
-    });
-    it('DELETE /api/articles/:article_id does not return deleted comment', () => {
+        })
+        .then(() => {
         return request
         .get(`/api/articles/${articles[0]._id}/comments`)
-        .expect(200)
-        .then(res => {
-            expect(res.body.comments.length).to.equal(1);
+            .expect(200)
+            .then(res => {
+                expect(res.body.comments.length).to.equal(1);
+            });
         });
     });
     it('DELETE /api/comments/:comment_id returns 400 for an invalid ObjectId', () => {

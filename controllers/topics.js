@@ -3,7 +3,7 @@ const { Topic, User, Article } = require('../models');
 const getTopics = (req, res, next) => {
     Topic.find()
     .then(topics => res.status(200).send({ topics }))
-    .catch(err => next(err));
+    .catch(next);
 }
 
 const getArticlesByTopic = (req, res, next) => {
@@ -13,7 +13,7 @@ const getArticlesByTopic = (req, res, next) => {
         if (articles.length) res.status(200).send({ articles });
         else next({status: 404, message: `No articles found with topic "${topic_slug}"`})
     })
-    .catch(err => next(err));
+    .catch(next);
 }
 
 const addArticleByTopic = (req, res, next) => {

@@ -28,6 +28,11 @@ const ArticleSchema = new Schema({
     ref: 'users',
     required: true
   }
+  // comments: {
+  //   type: Number,
+  //   default: 0,
+  //   required: true
+  // }
 });
 
 module.exports = mongoose.model('articles', ArticleSchema);

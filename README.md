@@ -52,9 +52,7 @@ Run ```npm run seed``` in the command line to seed your dev database. "Database 
 Run ```npm start``` in the command line to run your server. "Connected to Mongo" and "listening on port" will log to the console if configured correctly. Requests can now be made to the server.
 
 ## Testing
-With MongoDB connected, run ```npm test``` in the command line to run the provided tests. These tests check the endpoints for each route, including errors for bad requests and bad routes.
-
-The test database will be reseeded before each test to ensure consistency, with the exception of the final set of test entitled "/api - deleting comments" which do not reseed in order to check if the comment has been successfully deleted from the database. 
+With MongoDB connected, run ```npm test``` in the command line to run the provided tests. These tests check the endpoints for each route, including errors for bad requests and bad routes. The test database will be reseeded before each test to ensure consistency.
 
 If the test responses are not as expected, check that you have successfully set up your config file so that the test data is being used, not the dev data.
 
