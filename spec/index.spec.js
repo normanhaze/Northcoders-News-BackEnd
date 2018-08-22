@@ -42,6 +42,7 @@ describe('/api', () => {
         .then(res => {
             expect(res.body).to.be.a('object');
             expect(res.body.topics.length).to.equal(2);
+            expect(res.body.topics[0]).to.include.keys('_id', 'slug', 'title');
             expect(res.body.topics[0].slug).to.equal('mitch');
         });
     });
@@ -51,6 +52,7 @@ describe('/api', () => {
         .then(res => {
             expect(res.body).to.be.a('object');
             expect(res.body.articles.length).to.equal(2);
+            expect(res.body.articles[0]).to.include.keys('belongs_to', 'body','comment_count', 'created_at', 'created_by', 'title','votes');
             expect(res.body.articles[0].title).to.equal("Living in the shadow of a great man");
         });
     });
@@ -110,8 +112,9 @@ describe('/api', () => {
         .expect(200)
         .then(res => {
             expect(res.body).to.be.a('object');
-            expect(res.body.articles.length).to.equal(5);
-            expect(res.body.articles[2].title).to.equal(`They're not exactly dogs, are they?`);
+            expect(res.body.all_articles.length).to.equal(5);
+            expect(res.body.all_articles[0]).to.include.keys('belongs_to', 'body','comment_count', 'created_at', 'created_by', 'title','votes');
+            expect(res.body.all_articles[2].title).to.equal(`They're not exactly dogs, are they?`); 
         });
     });
     it('GET /api/articles/:article_id retrieves a single article', () => {
@@ -120,7 +123,9 @@ describe('/api', () => {
         .then(res => {
             expect(res.body).to.be.a('object');
             expect(res.body.article).to.be.a('object');
+            expect(res.body.article).to.include.keys('belongs_to', 'body','comment_count', 'created_at', 'created_by', 'title','votes');
             expect(res.body.article.body).to.equal("Who are we kidding, there is only one, and it's Mitch!");
+
         });
     });
     it('GET /api/articles/:article_id returns a 400 for an invalid ObjectId', () => {
@@ -145,6 +150,7 @@ describe('/api', () => {
         .then(res => {
             expect(res.body).to.be.a('object');
             expect(res.body.comments.length).to.equal(2);
+            expect(res.body.comments[0]).to.include.keys('_id', 'body', 'created_by', 'belongs_to', 'created_at', 'votes')
             expect(res.body.comments[0].votes).to.equal(19);
         });
     });

@@ -1,4 +1,4 @@
-const { Topic, User, Article } = require('../models');
+const { Topic, User, Article, Comment } = require('../models');
 
 const getTopics = (req, res, next) => {
     Topic.find()
@@ -8,8 +8,22 @@ const getTopics = (req, res, next) => {
 
 const getArticlesByTopic = (req, res, next) => {
     const { topic_slug } = req.params;
-    Article.find({ belongs_to: topic_slug })
-    .then(articles => {
+    Article.find({ belongs_to: topic_slug }).lean()
+    .then((articles) => {
+        return Promise.all([
+            articles,
+            ...articles.map(article => Comment.find({ belongs_to: article._id }))
+        ])
+    })
+    .then(([topicArticles, ...comments]) => {
+        const commentCount = comments.reduce((acc, comment, i) => {
+            let articleId = topicArticles[i]._id;
+            acc[articleId] = comment.length;
+            return acc;
+        }, {})
+        const articles = topicArticles.map(article => {
+            return {...article, comment_count: commentCount[article._id]};
+        })
         if (articles.length) res.status(200).send({ articles });
         else next({status: 404, message: `No articles found with topic "${topic_slug}"`})
     })

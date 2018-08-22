@@ -15,7 +15,6 @@ const getArticles = (req, res, next) => {
         const all_articles = articles.map(article => { 
             return {...article, comment_count: commentCount[article._id] || 0} 
         });
-            // article.comments = commentCount[article._id] || 0);
         res.status(200).send({ all_articles });
         })
     .catch(next);
@@ -47,7 +46,7 @@ const getArticleComments = (req, res, next) => {
     Article.findById(article_id)
     .then(article => { 
         if (article === null) throw {status: 404, message: `Article ${article_id} not found` };
-        return Comment.find({ belongs_to: article_id })
+        return Comment.find({ belongs_to: article_id }).populate("created_by").populate("belongs_to")
         })
         .then(comments => {
             if (comments.length) res.status(200).send({ comments });
