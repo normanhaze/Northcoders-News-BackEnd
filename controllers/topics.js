@@ -8,7 +8,7 @@ const getTopics = (req, res, next) => {
 
 const getArticlesByTopic = (req, res, next) => {
     const { topic_slug } = req.params;
-    Article.find({ belongs_to: topic_slug }).lean()
+    Article.find({ belongs_to: topic_slug }).populate("created_by").lean()
     .then((articles) => {
         return Promise.all([
             articles,
