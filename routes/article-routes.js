@@ -6,7 +6,7 @@ articleRouter.route('/')
 
 articleRouter.route('/:article_id')
 .get(getArticleById)
-.put(voteArticle);
+.patch(voteArticle);
 
 articleRouter.route('/:article_id/comments')
 .get(getArticleComments)

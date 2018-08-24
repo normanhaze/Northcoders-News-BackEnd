@@ -259,90 +259,90 @@ describe('/api', () => {
             expect(res.body.message).to.equal('User 5b6329b3f16f435af91d4ebf not found');
         });
     });
-    it('PUT /api/articles/:article_id?vote=up returns 200 and increases votes by 1', () => {
+    it('PATCH /api/articles/:article_id?vote=up returns 200 and increases votes by 1', () => {
         return request
-        .put(`/api/articles/${articles[0]._id}?vote=up`)
+        .patch(`/api/articles/${articles[0]._id}?vote=up`)
         .expect(200)
         .then(res => {
             expect(res.body).to.be.a('object');
             expect(res.body.article.votes).to.equal(1);
         });
     });
-    it('PUT /api/articles/:article_id?vote=down returns 200 and decreases votes by 1', () => {
+    it('PATCH /api/articles/:article_id?vote=down returns 200 and decreases votes by 1', () => {
         return request
-        .put(`/api/articles/${articles[0]._id}?vote=down`)
+        .patch(`/api/articles/${articles[0]._id}?vote=down`)
         .expect(200)
         .then(res => {
             expect(res.body).to.be.a('object');
             expect(res.body.article.votes).to.equal(-1);
         });
     });
-    it('PUT /api/articles/:article_id?vote=hello returns 200 and unchanged object if query value is invalid', () => {
+    it('PATCH /api/articles/:article_id?vote=hello returns 200 and unchanged object if query value is invalid', () => {
         return request
-        .put(`/api/articles/${articles[0]._id}?vote=hello`)
+        .patch(`/api/articles/${articles[0]._id}?vote=hello`)
         .expect(200)
         .then(res => {
             expect(res.body).to.be.a('object');
             expect(res.body.article.votes).to.equal(0);
         });
     });
-    it('PUT /api/articles/:article_id?vote=down returns 400 for an invalid ObjectId', () => {
+    it('PATCH /api/articles/:article_id?vote=down returns 400 for an invalid ObjectId', () => {
         return request
-        .put(`/api/articles/comment123?vote=down`)
+        .patch(`/api/articles/comment123?vote=down`)
         .expect(400)
         .then(res => {
             expect(res.body).to.be.a('object');
             expect(res.body.message).to.exist;
         });
     });
-    it('PUT /api/articles/:article_id?vote=down returns 404 when the ObjectId does not exist in the collection', () => {
+    it('PATCH /api/articles/:article_id?vote=down returns 404 when the ObjectId does not exist in the collection', () => {
         return request
-        .put(`/api/articles/5b6329b3f16f435af91d4ec0?vote=down`)
+        .patch(`/api/articles/5b6329b3f16f435af91d4ec0?vote=down`)
         .expect(404)
         .then(res => {
             expect(res.body).to.be.a('object');
             expect(res.body.message).to.equal('Article 5b6329b3f16f435af91d4ec0 not found');
         });
     });
-    it('PUT /api/comments/:comment_id?vote=up returns 200 and increases votes by 1', () => {
+    it('PATCH /api/comments/:comment_id?vote=up returns 200 and increases votes by 1', () => {
         return request
-        .put(`/api/comments/${comments[0]._id}?vote=up`)
+        .patch(`/api/comments/${comments[0]._id}?vote=up`)
         .expect(200)
         .then(res => {
             expect(res.body).to.be.a('object');
             expect(res.body.comment.votes).to.equal(8);
         });
     });
-    it('PUT /api/comments/:comment_id?vote=down returns 200 and decreases votes by 1', () => {
+    it('PATCH /api/comments/:comment_id?vote=down returns 200 and decreases votes by 1', () => {
         return request
-        .put(`/api/comments/${comments[0]._id}?vote=down`)
+        .patch(`/api/comments/${comments[0]._id}?vote=down`)
         .expect(200)
         .then(res => {
             expect(res.body).to.be.a('object');
             expect(res.body.comment.votes).to.equal(6);
         });
     });
-    it('PUT /api/comments/:comment_id?vote=hello returns 200 and unchanged object if query value is invalid', () => {
+    it('PATCH /api/comments/:comment_id?vote=hello returns 200 and unchanged object if query value is invalid', () => {
         return request
-        .put(`/api/comments/${comments[0]._id}?vote=hello`)
+        .patch(`/api/comments/${comments[0]._id}?vote=hello`)
         .expect(200)
         .then(res => {
             expect(res.body).to.be.a('object');
             expect(res.body.comment.votes).to.equal(7);
         });
     });
-    it('PUT /api/comments/:comment_id?vote=down returns 400 for an invalid ObjectId', () => {
+    it('PATCH /api/comments/:comment_id?vote=down returns 400 for an invalid ObjectId', () => {
         return request
-        .put(`/api/comments/comment123?vote=down`)
+        .patch(`/api/comments/comment123?vote=down`)
         .expect(400)
         .then(res => {
             expect(res.body).to.be.a('object');
             expect(res.body.message).to.exist;
         });
     });
-    it('PUT /api/comments/:comment_id?vote=down returns 404 when the ObjectId does not exist in the collection', () => {
+    it('PATCH /api/comments/:comment_id?vote=down returns 404 when the ObjectId does not exist in the collection', () => {
         return request
-        .put(`/api/comments/5b6329b3f16f435af91d4ec0?vote=down`)
+        .patch(`/api/comments/5b6329b3f16f435af91d4ec0?vote=down`)
         .expect(404)
         .then(res => {
             expect(res.body).to.be.a('object');
