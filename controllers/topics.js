@@ -35,13 +35,16 @@ const addArticleByTopic = (req, res, next) => {
     User.findById(req.body.created_by)
     .then(user => {
         if (user === null) throw { status: 404, message: 'User not found' }; 
-        return Article.create({ 
-            ...req.body,
-            belongs_to: topic_slug
-        });
+        return Promise.all([
+            user,
+            Article.create({ 
+                ...req.body,
+                belongs_to: topic_slug
+            })
+        ])
     })
-    .then(article => {
-        res.status(201).send({ message: 'Article succesfully added!', article })
+    .then(([user, article]) => {
+        res.status(201).send({ message: 'Article succesfully added!', article: {...article.toObject(), created_by: user} })
     })
     .catch(err => {
         if (err.name === 'ValidationError') err.status = 400;
