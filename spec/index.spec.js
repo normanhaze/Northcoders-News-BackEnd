@@ -9,7 +9,8 @@ const seedDB = require('../seed/seed');
 
 describe('/api', () => {
     let topics, users, articles, comments;
-    beforeEach(() => {
+    beforeEach(function() {
+        this.timeout(3000);
         return seedDB(data)
         .then(docs => {
             [topics, users, articles, comments] = docs

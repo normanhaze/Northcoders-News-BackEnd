@@ -46,7 +46,7 @@ const getArticleComments = (req, res, next) => {
     Article.findById(article_id)
     .then(article => { 
         if (article === null) throw {status: 404, message: `Article ${article_id} not found` };
-        return Comment.find({ belongs_to: article_id }).populate("created_by").populate("belongs_to")
+        return Comment.find({ belongs_to: article_id }).populate("created_by");
         })
         .then(comments => {
             if (comments.length) res.status(200).send({ comments });
@@ -63,17 +63,23 @@ const addComment = (req, res, next) => {
     User.findById(req.body.created_by)
     .then(user => {
         if (user === null) throw {status: 404, message: `User ${req.body.created_by} not found`};
-        return Article.findById(article_id)
+        return Promise.all([
+            user,
+            Article.findById(article_id)
+        ])
     })
-    .then(article => {
+    .then(([user, article]) => {
         if (article === null) throw {status: 404, message: `Article ${article_id} not found`};
-        return Comment.create({
-            ...req.body,
-            belongs_to: article_id
-        });
+        return Promise.all([
+            user,
+            Comment.create({
+                ...req.body,
+                belongs_to: article_id
+            })
+        ])    
     })
-    .then(comment => {
-        res.status(201).send({message: 'Comment successfully added!', comment})
+    .then(([user, comment]) => {
+        res.status(201).send({message: 'Comment successfully added!', comment: {...comment.toObject(), created_by: user}})
     })
     .catch(err => {
         if (err.name === 'ValidationError' || err.name === 'CastError') err.status = 400;
